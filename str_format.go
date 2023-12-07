@@ -6,10 +6,10 @@ func StrFormatHumpToUnder(s string) string {
 
 	var upperIndex []int
 	for i := range sr {
-		if sr[i] < 0x41 || sr[i] > 0x5A {
+		if !(sr[i] >= 'A' && sr[i] <= 'Z') {
 			continue
 		}
-		if i == 0x00 {
+		if i == 0 {
 			sr[i] += 0x20
 		} else {
 			upperIndex = append(upperIndex, i)
@@ -22,7 +22,7 @@ func StrFormatHumpToUnder(s string) string {
 		v += k
 		sr[v] += 0x20
 		copy(sr[v+1:], sr[v:])
-		sr[v] = 0x5F
+		sr[v] = '_'
 	}
 
 	return string(sr)
@@ -34,12 +34,13 @@ func StrFormatUnderToHump(s string) string {
 
 	var humpIndex []int
 	for i := range sr {
-		if sr[i] < 0x41 || sr[i] > 0x5A {
-			if i == 0x00 {
-				sr[i] -= 0x20
-			}
+		if i == 0 &&
+			(sr[i] >= 'a' && sr[i] <= 'z') {
+			sr[i] -= 0x20
 		}
-		if sr[i] == 0x5F {
+		if sr[i] == '_' &&
+			len(sr) > i+1 &&
+			(sr[i+1] >= 'a' && sr[i+1] <= 'z') {
 			humpIndex = append(humpIndex, i)
 		}
 	}
